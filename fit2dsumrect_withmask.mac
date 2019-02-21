@@ -1,0 +1,45 @@
+%!*\ BEGINNING OF GUI MACRO FILE
+%!*\
+%!*\ call example on cmd:
+%!*\
+%!*\ fit2d -key -dim1024x1024 -fvar#XMIN=276 -fvar#YMIN=83 -fvar#XMAX=280 -fvar#YMAX=92 svar#FILE=mask.msk -svar#FILE=latest*.tiff -macfit2dsumrect_withmask.mac
+%!*\
+%!*\
+LIST VARIABLES
+GUI
+SET-UP
+OVER-RIDE VALUES
+OVER-RIDE PIXEL SIZES
+YES
+DEFAULT X-PIXEL SIZE
+172
+DEFAULT Y-PIXEL SIZE
+172
+O.K.
+EXIT
+SAXS / GISAXS
+INPUT
+#FILE
+O.K.
+MASK
+LOAD MASK
+#MASK
+EXIT
+MATHS
+STATISTICS
+4
+#XMIN
+#YMIN
+#XMAX
+#YMIN
+#XMAX
+#YMAX
+#XMIN
+#YMAX
+O.K.
+EXIT
+EXIT
+EXIT MENU
+QUIT
+YES
+%!*\ END OF IO MACRO FILE
