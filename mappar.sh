@@ -1,12 +1,11 @@
 #!/bin/bash
-# will read target values from *.log not *.mx
 
-# Tmin
-# Tmin <mydir>
-# Tmin <mydir> -Chi2Red
-# Tmin <mydir> -LogdI
-# Tmin . -Chi2Red
-# Tmin . -LogdI
+
+# automatically deriving number ranges from patterns: 
+# mappar SSS_180x360_P*_*_ST_360_400_N50_OSL.png
+# manually set ranges 
+# mappar SSS_180x360_P*_*_ST_360_400_N50_OSL.png 4 144 4 144
+
 
 # paths do not need to include final "/"
 
@@ -14,6 +13,93 @@
 #[[ "${STR}" != */ ]] && STR="${STR}/"
 #[[ "${STR}" == */ ]] && STR="${STR: : -1}"
 
+echo $#
+
+if [[ $# != 1 && $# != 5 ]] ; then
+	echo "1 or 5 arguments required" 
+	exit
+fi
+
+
+
+
+
+
+files="$1"
+#echo $files
+
+
+# count number of *-patterns
+npat=`echo "$1" | awk -F"*" '{print NF-1}'`
+
+echo $npat
+
+if [[ $npat < 1 ]] ; then
+	echo "At least one *-pattern must be inside pattern string $1" 
+	exit
+fi
+
+# replace * with (.*) for BASH_REMATCH
+filepat=`echo "$1" | sed -e 's/\*/\(.\*\)/g'`
+echo $filepat
+
+filelist=()
+parstrlist=()
+parlist=()
+
+minlist=()
+maxlist=()
+
+i=0
+for file in $files
+do
+	filelist=("${filelist[@]}" $file)
+
+	[[ $file =~ $filepat ]];
+	printf "$i: "
+	for (( j=0; j<npat; j++))
+	do
+		parstrlist[${i},${j}]=${BASH_REMATCH[$((j+1))]}
+		printf ${parstrlist[${i},${j}]}
+		printf " "
+
+		# remove trailing/leading 0 and convert string to number
+		parlist[${i},${j}]=$(($(echo ${parstrlist[${i},${j}]} | sed -e 's/^[0]*//')))
+
+		printf ${parlist[${i},${j}]}
+		printf " "
+
+		# initialize minlist and maxlist
+		if [[ $i == 0 ]] ; then
+			minlist[${j}]=${parlist[0,${j}]}
+			maxlist[${j}]=${parlist[0,${j}]}
+		else
+			if [[ ${parlist[${i},${j}]} -gt ${maxlist[${j}]} ]] ; then
+				maxlist[${j}]=${parlist[${i},${j}]}
+			fi
+			if [[ ${parlist[${i},${j}]} -lt ${minlist[${j}]} ]] ; then
+				minlist[${j}]=${parlist[${i},${j}]}
+			fi			
+		fi
+	done
+	printf "\n"
+	((i++))
+done
+
+for (( j=0; j<npat; j++))
+do
+	printf "$j: ${minlist[${j}]} ${maxlist[${j}]}\n"
+done
+
+
+
+#echo ${filelist[@]}
+
+
+echo ${#filelist[@]}
+
+
+exit
 
 mydir=$(pwd)
 [[ "${mydir}" != */ ]] && mydir="${mydir}/"
@@ -25,10 +111,7 @@ if [[ $# -gt 0 && "$1" != "." ]] ; then
 	[[ "${mydir}" != */ ]] && mydir="${mydir}/"
 fi
 
-echo $mydir
 
-filelist="$mydir*.png"
-#echo $filelist
 
 array=()
 filelistnew=()
