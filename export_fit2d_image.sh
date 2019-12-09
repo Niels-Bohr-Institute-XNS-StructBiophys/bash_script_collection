@@ -7,7 +7,7 @@
 # export_fit2d_image im_002217[0-8]*.tiff 40 60 280 197 50 250 lin none none
 # for pipes (e.g. with ls):
 # ls im_002217[0-8]*.tiff | export_fit2d_image - 40 60 280 197 50 250 log mask.msk none
-
+# ls *.tiff | export_fit2d_image - 1 1 487 619 auto auto log ../masks/2mm-offcen.msk none
 
 # fit2d alias must be set, too
 # path to Fit2D macro-files
@@ -108,8 +108,16 @@ do
 	continue
 	fi
 
-	image=${file/".tiff"/""}
-	image="${image}${subtr}_$1_$2_$3_$4_$5_$6_$7_$8.ps"
+	# get image and mask basename, strip file type endings
+	image=`echo $(basename "$file")`
+	image=${image/".tiff"/""}
+	#echo $image
+
+	mask=`echo $(basename "$8")`
+	mask=${mask/".msk"/""}
+	#echo $mask
+
+	image="${image}${subtr}_$1_$2_$3_$4_$5_$6_$7_$mask.ps"
 	echo "image=$image"
 
 	# call fit2d macro
