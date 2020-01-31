@@ -3,9 +3,13 @@
 
 if [ "$#" -lt 1 ]; then
 	echo "Print list of parameters for a list of files (allows wildcards and patterns):"
-	echo "     get_params_from_tiff <list of files> -p <list of params>"
-	echo "e.g. get_params_from_tiff im_0049492_caz.tiff im_0049495_caz.tiff -p vp1 vg1 zkstage"
-	echo "e.g. get_params_from_tiff im_00494{8[2-4],9[0-3]}_caz.tiff -p vp1 vg1 zkstage"
+	echo "     get_params_from_tiff <list of files> -c 4 72 -d '  ' -p <list of params>"
+	echo "e.g. get_params_from_tiff im_0049492_caz.tiff im_0049495_caz.tiff -p vp1 vg1 zkstage -c 8 80"
+	echo "e.g. get_params_from_tiff im_00494{8[2-4],9[0-3]}_caz.tiff -d '\t' -p vp1 vg1 zkstage"
+	echo ""
+	echo "Note that the -c, -d and -p options must stand after list of filenames an can be placed in any order"
+	echo "     -c min_char_per_col max_char_per_col (min-max number of characters per column, default is 4 72)"
+	echo "     -d col_del                           (column delimiter string, e.g. '\t', ',', ';', default is '  ')"
 	echo ""
 	echo "List all available parameters for one file:"
 	echo "     get_params_from_tiff <file>"
@@ -31,6 +35,10 @@ max() {
 
 
 # check and assign input
+col_del="  "
+min_char_per_col=4
+max_char_per_col=72
+	
 filelist=()
 paramlist=()
 file_instead_of_param=true
@@ -39,6 +47,22 @@ for ((i=1; i<=$#; i++)); do
 	# check for -p flag
 	if [ "${!i}" == "-p" ]; then
 		file_instead_of_param=false
+		continue
+	fi
+
+	# check for -c flag
+	if [ "${!i}" == "-c" ]; then
+		i=$((i+1))
+		min_char_per_col=${!i}
+		i=$((i+1))
+		max_char_per_col=${!i}
+		continue
+	fi
+
+	# check for -d flag
+	if [ "${!i}" == "-d" ]; then
+		i=$((i+1))
+		col_del=${!i}
 		continue
 	fi
 
@@ -54,17 +78,18 @@ for ((i=1; i<=$#; i++)); do
 	fi
 done
 
-#echo ${filelist[@]}
-#echo ${paramlist[@]}
+echo ${filelist[@]}
+echo ""
+echo ${paramlist[@]}
+echo ""
+echo "'$col_del'"
+echo $min_char_per_col
+echo $max_char_per_col
 
 
 # print output
 if [ "$#" -ge 2 ]; then
 	# create matrix of filenames and parameters
-
-	col_del="  "
-	min_char_per_col=4
-	max_char_per_col=72
 	colwidthlist=()
 	for ((i=0; i<=${#paramlist[@]}; i++)); do
 		# colwidthlist=(${colwidthlist[@]} $min_char_per_col)
@@ -116,8 +141,9 @@ if [ "$#" -ge 2 ]; then
 	for param in ${paramlist[@]}
 	do
 		col_index=$((col_index+1))
-		printf '%s' "$col_del"
-
+		dummy=$(printf '%s' $col_del)
+		printf $dummy
+		
 		if [ ${#param} -gt ${colwidthlist[$col_index]} ]; then
 				val=${param:0:colwidthlist[$col_index]}
 		else
@@ -148,7 +174,8 @@ if [ "$#" -ge 2 ]; then
 			if [ ${#val} -gt ${colwidthlist[$col_index]} ]; then
 				val=${val:0:colwidthlist[$col_index]}
 			fi
-			printf '%s' "$col_del"
+			dummy=$(printf '%s' $col_del)
+			printf $dummy
 			printf "%-${colwidthlist[$col_index]}s" "$val"
 		done
 		printf '\n'
