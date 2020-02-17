@@ -38,7 +38,7 @@ max() {
 col_del="  "
 min_char_per_col=4
 max_char_per_col=72
-	
+
 filelist=()
 paramlist=()
 file_instead_of_param=true
@@ -141,8 +141,8 @@ if [ "$#" -ge 2 ]; then
 	for param in ${paramlist[@]}
 	do
 		col_index=$((col_index+1))
-		dummy=$(printf '%s' $col_del)
-		printf $dummy
+		dummy=$(printf "%s" "$col_del")
+		printf "$dummy"
 		
 		if [ ${#param} -gt ${colwidthlist[$col_index]} ]; then
 				val=${param:0:colwidthlist[$col_index]}
@@ -174,8 +174,8 @@ if [ "$#" -ge 2 ]; then
 			if [ ${#val} -gt ${colwidthlist[$col_index]} ]; then
 				val=${val:0:colwidthlist[$col_index]}
 			fi
-			dummy=$(printf '%s' $col_del)
-			printf $dummy
+			dummy=$(printf "%s" "$col_del")
+			printf "$dummy"
 			printf "%-${colwidthlist[$col_index]}s" "$val"
 		done
 		printf '\n'
