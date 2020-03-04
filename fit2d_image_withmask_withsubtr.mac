@@ -2,7 +2,7 @@
 %!*\
 %!*\ call example on cmd:
 %!*\
-%!*\ fit2d -key -dim1024x1024 -fvar#XMIN=40 -fvar#YMIN=60 -fvar#XMAX=280 -fvar#YMAX=197 -fvar#MIN=0 -fvar#MAX=100 -svar#FILE_IN=latest_0043800.tiff -svar#FILE_OUT=latest_0043800.ps -svar#SCALE=LOGSCALE -svar#MASK=mask.msk -svar#SUBTR=latest_0043799.tiff -macfit2d_image_withmask_withsubtr.mac
+%!*\ fit2d -key -dim1024x1024 -fvar#XMIN=40 -fvar#YMIN=60 -fvar#XMAX=280 -fvar#YMAX=197 -fvar#MIN=0 -fvar#MAX=100 -svar#FILE_IN=latest_0043800.tiff -svar#FILE_OUT=latest_0043800.ps -svar#SCALE=LOGSCALE -svar#MASK=mask.msk -svar#SUBTR=latest_0043799.tiff -fvar#VOL_FRACT=0.95 -fvar#CF_SAMPLE=0.23 -fvar#CF_BACKGR=0.13 -macfit2d_image_withmask_withsubtr.mac
 %!*\
 %!*\
 LIST VARIABLES
@@ -20,9 +20,19 @@ EXIT
 SAXS / GISAXS
 INPUT
 #FILE_IN
+MATHS
+SCALAR *
+#CF_SAMPLE
+EXIT
 EXCHANGE
 INPUT
 #SUBTR
+MATHS
+SCALAR *
+#CF_BACKGR
+SCALAR *
+#VOL_FRACT
+EXIT
 EXCHANGE
 MATHS
 SUBTRACT
