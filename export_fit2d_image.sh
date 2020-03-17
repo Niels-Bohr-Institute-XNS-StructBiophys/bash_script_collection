@@ -63,7 +63,7 @@ fi
 #echo "${filelist[@]}"
 
 
-# now all files are in filelist and arguments are shifted, we have $1...$12
+# now all files are in filelist and arguments are shifted, we have $1...${12}
 # list all args
 i=1
 for j in $*; do
@@ -102,10 +102,6 @@ fi
 echo "subtr=$subtr"
 
 
-volfract=$10
-CFsample=$11
-CFbackgr=$12
-
 for file in ${filelist[@]}
 do
 #	printf "$file: "
@@ -132,27 +128,27 @@ do
 			if [ "$9" == "none" ]; then # no subtraction
 				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -mac${path_to_mac}fit2d_image_nomask_nosubtr_autoscale.mac)
 			else # with subtraction
-				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -svar#SUBTR=$9 -fvar#VOL_FRACT=$10 -fvar#CF_SAMPLE=$11 -fvar#CF_BACKGR=$12 -mac${path_to_mac}fit2d_image_nomask_withsubtr_autoscale.mac)
+				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -svar#SUBTR=$9 -fvar#VOL_FRACT=${10} -fvar#CF_SAMPLE=${11} -fvar#CF_BACKGR=${12} -mac${path_to_mac}fit2d_image_nomask_withsubtr_autoscale.mac)
 			fi
 		else # with mask
 			if [ "$9" == "none" ]; then # no subtraction
 				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -svar#MASK=$8 -mac${path_to_mac}fit2d_image_withmask_nosubtr_autoscale.mac)
 			else # with subtraction
-				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -svar#MASK=$8 -svar#SUBTR=$9 -fvar#VOL_FRACT=$10 -fvar#CF_SAMPLE=$11 -fvar#CF_BACKGR=$12 -mac${path_to_mac}fit2d_image_withmask_withsubtr_autoscale.mac)
+				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -svar#MASK=$8 -svar#SUBTR=$9 -fvar#VOL_FRACT=${10} -fvar#CF_SAMPLE=${11} -fvar#CF_BACKGR=${12} -mac${path_to_mac}fit2d_image_withmask_withsubtr_autoscale.mac)
 			fi
 		fi 
-	else # with autoscale
+	else # no autoscale
 		if [ "$8" == "none" ]; then # no mask
 			if [ "$9" == "none" ]; then # no subtraction
 				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -fvar#MIN=$5 -fvar#MAX=$6 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -mac${path_to_mac}fit2d_image_nomask_nosubtr.mac)
 			else # with subtraction
-				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -fvar#MIN=$5 -fvar#MAX=$6 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -svar#SUBTR=$9 -fvar#VOL_FRACT=$10 -fvar#CF_SAMPLE=$11 -fvar#CF_BACKGR=$12 -mac${path_to_mac}fit2d_image_nomask_withsubtr.mac)
+				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -fvar#MIN=$5 -fvar#MAX=$6 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -svar#SUBTR=$9 -fvar#VOL_FRACT=${10} -fvar#CF_SAMPLE=${11} -fvar#CF_BACKGR=${12} -mac${path_to_mac}fit2d_image_nomask_withsubtr.mac)
 			fi
 		else # with mask
 			if [ "$9" == "none" ]; then # no subtraction
 				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -fvar#MIN=$5 -fvar#MAX=$6 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -svar#MASK=$8 -mac${path_to_mac}fit2d_image_withmask_nosubtr.mac)
 			else # with subtraction
-				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -fvar#MIN=$5 -fvar#MAX=$6 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -svar#MASK=$8 -svar#SUBTR=$9 -fvar#VOL_FRACT=$10 -fvar#CF_SAMPLE=$11 -fvar#CF_BACKGR=$12 -mac${path_to_mac}fit2d_image_withmask_withsubtr.mac)
+				$(fit2d -key -dim1024x1024 -fvar#XMIN=$1 -fvar#YMIN=$2 -fvar#XMAX=$3 -fvar#YMAX=$4 -fvar#MIN=$5 -fvar#MAX=$6 -svar#SCALE=$scale -svar#FILE_IN=$file -svar#FILE_OUT=$image -svar#MASK=$8 -svar#SUBTR=$9 -fvar#VOL_FRACT=${10} -fvar#CF_SAMPLE=${11} -fvar#CF_BACKGR=${12} -mac${path_to_mac}fit2d_image_withmask_withsubtr.mac)
 			fi
 		fi
 	fi
