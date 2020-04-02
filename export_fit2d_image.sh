@@ -96,7 +96,9 @@ fi
 if [ "$9" == "none" ] ; then
 	subtr=""
 else
-	subtr=${9/".tiff"/""}
+	# get background image basename, strip path and file type ending
+	subtr=`echo $(basename "$9")`
+	subtr=`echo "${subtr%.*}"`
 	subtr="-$subtr"
 fi
 echo "subtr=$subtr"
@@ -110,18 +112,22 @@ do
 	continue
 	fi
 
-	# get image and mask basename, strip file type endings
+	# get image and mask basename, strip path and file type endings
 	image=`echo $(basename "$file")`
-	image=${image/".tiff"/""}
-	#echo $image
+	image=`echo "${image%.*}"`
+	echo "image=$image"
 
 	mask=`echo $(basename "$8")`
-	mask=${mask/".msk"/""}
-	#echo $mask
+	mask=`echo "${mask%.*}"`
+	echo "mask=$mask"
 
 	image="${image}${subtr}_$1_$2_$3_$4_$7_$mask.ps"
 	echo "image=$image"
 
+	imagepath=`echo $(dirname "$file")`
+	image="${imagepath}/${image}"
+	echo "image=$image"
+	
 	# call fit2d macro
 	if [ "$5" == "auto" ]; then # autoscale
 		if [ "$8" == "none" ]; then # no mask
