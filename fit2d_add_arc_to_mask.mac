@@ -1,0 +1,33 @@
+%!*\ BEGINNING OF GUI MACRO FILE
+%!*\
+%!*\ call example on cmd:
+%!*\
+%!*\ fit2d -key -dim1024x1024 
+%!*\
+%!*\
+LIST VARIABLES
+GUI
+SAXS / GISAXS
+INPUT
+#FILE_IN
+MASK
+LOAD MASK
+#MASK_IN
+MASK ARC
+           3
+ 
+ #P1X
+ #P1Y
+ #P2X
+ #P2Y
+ #P3X
+ #P3Y
+#LINETHICKNESS
+SAVE MASK
+#MASK_OUT
+EXIT
+EXIT
+EXIT MENU
+QUIT
+YES
+%!*\ END OF IO MACRO FILE
