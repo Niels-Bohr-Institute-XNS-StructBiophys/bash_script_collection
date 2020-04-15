@@ -162,5 +162,5 @@ do
 	ps2pdf $image ${image/".ps"/".pdf"}
 	pdfcrop ${image/".ps"/".pdf"} ${image/".ps"/"_cropped.pdf"}
 	convert -density 300 -quality 100 ${image/".ps"/"_cropped.pdf"} ${image/".ps"/".png"}
-	rm $image ${image/".ps"/".pdf"} ${image/".ps"/"_cropped.pdf"}
+	rm $image ${image/".ps"/".pdf"}	# ${image/".ps"/"_cropped.pdf"} 
 done
