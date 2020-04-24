@@ -3,40 +3,54 @@
 # use -i flag here to use aliases like fit2d
 #
 # e.g.
-# export_fit2d_image im_002217[0-8]_caz.tiff 40 60 280 197 50 250 log mask.msk im_0022169_caz.tiff
-# export_fit2d_image im_002217[0-8]*.tiff 40 60 280 197 50 250 lin none none
+# export_fit2d_image im_002217[0-8]_caz.tiff 40 60 280 197 50 250 log mask.msk im_0022169_caz.tiff 1.0 0.08 0.075 PDF
+# export_fit2d_image im_002217[0-8]*.tiff 40 60 280 197 50 250 lin none none 1.0 0.08 0.075 PNG
 # for pipes (e.g. with ls):
-# ls im_002217[0-8]*.tiff | export_fit2d_image - 40 60 280 197 50 250 log mask.msk none
-# ls *.tiff | export_fit2d_image - 1 1 487 619 auto auto log ../masks/2mm-offcen.msk none
+# ls im_002217[0-8]*.tiff | export_fit2d_image - 40 60 280 197 50 250 log mask.msk none 1.0 0.08 0.075 PNG
+# ls *.tiff | export_fit2d_image - 1 1 487 619 auto auto log ../masks/2mm-offcen.msk none 1.0 0.08 0.075 PNG
 
 # fit2d alias must be set, too
 # path to Fit2D macro-files
 path_to_mac='/home/msmile/Seafile/MartinS/bash/'
 
 
-# at least 10 input args are required (file(s) rectangle corners and mask)
-if (( "$#" < 13 )); then
-	echo "At least 13 input arguments needed (including one sample file)!"
-	echo "Background subtraction with vol_fract applies to all sample files. CF_sample applies to all sample files."
-	echo "Intensity auto scaling must apply to both, Imax and Imin."
+# at least 14 input args are required (file(s) rectangle corners and mask)
+if (( "$#" < 14 )); then
+	echo "At least 14 input arguments needed (including one sample file)!"
 	echo ""
 	echo "Usage (using wildcards and pipes possible):"
 	echo ""
 	echo "With mask-file and background subtraction:"
-	echo "export_fit2d_image <sample-file(s)> <xmin> <ymin> <xmax> <ymax> <Imin> <Imax> <linlog> <mask-file> <background-file> <vol_fract> <CF_sample> <CF_background>"
+	echo "export_fit2d_image <sample-file(s)> <xmin> <ymin> <xmax> <ymax> <Imin> <Imax> <linlog> <mask-file> <background-file> <vol_fract> <CF_sample> <CF_background> <Format>"
 	echo ""
 	echo "Without mask-file and without background-file use none each:"
-	echo "export_fit2d_image <sample-file(s)> <xmin> <ymin> <xmax> <ymax> <Imin> <Imax> <linlog> none none 0.0 1.0 0.0"
+	echo "export_fit2d_image <sample-file(s)> <xmin> <ymin> <xmax> <ymax> <Imin> <Imax> <linlog> none none 0.0 1.0 0.0 PNG"
 	echo ""
 	echo "Without mask-file and background-file and fully automatic intensity scale:"
-	echo "export_fit2d_image <sample-file(s)> <xmin> <ymin> <xmax> <ymax> auto auto <linlog> none none 0.0 1.0 0.0"
+	echo "export_fit2d_image <sample-file(s)> <xmin> <ymin> <xmax> <ymax> auto auto <linlog> none none 0.0 1.0 0.0 PNG"
 	echo ""
 	echo "Same with pipes:"
-	echo "... | export_fit2d_image - <xmin> <ymin> <xmax> <ymax> <Imin> <Imax> <linlog> <mask-file> <background-file> <vol_fract> <CF_sample> <CF_background>"
-	echo "... | export_fit2d_image - <xmin> <ymin> <xmax> <ymax> <Imin> <Imax> <linlog> none none 0.0 1.0 0.0"
+	echo "... | export_fit2d_image - <xmin> <ymin> <xmax> <ymax> <Imin> <Imax> <linlog> <mask-file> <background-file> <vol_fract> <CF_sample> <CF_background> <Format>"
+	echo "... | export_fit2d_image - <xmin> <ymin> <xmax> <ymax> <Imin> <Imax> <linlog> none none 0.0 1.0 0.0 PNG"
 	echo "... | export_fit2d_image - <xmin> <ymin> <xmax> <ymax> ... "
 	echo ""
+	echo "Arguments:"
+	echo ""
+	echo "<xmin>: lower left corner for image selection"
+	echo "<ymin>: lower left corner for image selection"
+	echo "<xmax>: upper right corner for image selection"
+	echo "<ymax>: upper right corner for image selection"
+	echo "<Imin>: intensity scale, can be auto (if Imax is auto as well)"
+	echo "<Imax>: intenisty scale, can be auto (if Imin is auto as well)"
 	echo "<linlog>: log or lin for logarithmic or linear intensity scale"
+	echo "<mask-file>: if you wanna use a mask, provide the path to it, otherwise use none"
+	echo "<background-file>: if you wanna do background subtraction, provide the path of the image file, otherwise use none"
+	echo "<vol_fract>: if you wanna do background subtraction, provide volume fraction of how much of background-file will be subtracted, otherwise use e.g. 0.0"
+	echo "<CF_sample>: if you wanna scale the sample images, provide scaling factor, otherwise use 1.0"
+	echo "<CF_background>: if you use a background file and wanna scale it, provide scaling factor, otherwise use 1.0"
+	echo "<Format>: final output format, either PDF (produces only PDF) or PNG (uses 300 dpi, produces PDF as well)"
+	echo "NOTE: Background subtraction with vol_fract applies to all sample files."
+	echo "NOTE: CF_sample applies to all sample files."
 	echo ""
 	exit
 fi
@@ -45,7 +59,7 @@ fi
 # read files into filelist
 filelist=(" ")
 i=0
-while test $# -gt 12; do
+while test $# -gt 13; do
 	filelist[i]=$1
 	shift
 	i=$(($i + 1))
@@ -63,7 +77,7 @@ fi
 #echo "${filelist[@]}"
 
 
-# now all files are in filelist and arguments are shifted, we have $1...${12}
+# now all files are in filelist and arguments are shifted, we have $1...${13}
 # list all args
 i=1
 for j in $*; do
@@ -161,6 +175,10 @@ do
 
 	ps2pdf $image ${image/".ps"/".pdf"}
 	pdfcrop ${image/".ps"/".pdf"} ${image/".ps"/"_cropped.pdf"}
-	convert -density 300 -quality 100 ${image/".ps"/"_cropped.pdf"} ${image/".ps"/".png"}
+
+	if [ "${13}" == "PNG" ]; then
+		convert -density 300 -quality 100 ${image/".ps"/"_cropped.pdf"} ${image/".ps"/".png"}
+	fi
+
 	rm $image ${image/".ps"/".pdf"}	# ${image/".ps"/"_cropped.pdf"} 
 done
